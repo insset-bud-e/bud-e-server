@@ -6,7 +6,7 @@ server = Flask(__name__)
 
 server.secret_key = SECRET
 server.config['MONGO_DBNAME'] = 'bude'
-server.config['MONGO_URI'] = 'mongodb://localhost:27017/bude'
+server.config['MONGO_URI'] = 'mongodb://mongodb:27017/bude'
 
 mongo = PyMongo(server)
 
