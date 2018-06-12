@@ -22,6 +22,7 @@ def find():
             })
         return jsonify({'res' : output})
 
+
 @server.route('/device/<string:id>', methods=['GET'])
 def findOne(id):
     try:
@@ -39,7 +40,6 @@ def findOne(id):
             'type' : device['type']
             })
     return jsonify({'res' : output})
-
 
 # @app.route('/devices/save', methods=['POST'])
 # def create():

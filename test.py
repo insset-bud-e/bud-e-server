@@ -1,6 +1,9 @@
 from zeroconf import ServiceBrowser, Zeroconf
 
 
+from zeroconf import ServiceBrowser, Zeroconf
+
+
 class MyListener:
 
     def remove_service(self, zeroconf, type, name):
@@ -13,7 +16,8 @@ class MyListener:
 
 zeroconf = Zeroconf()
 listener = MyListener()
-browser = ServiceBrowser(zeroconf, "_http._tcp.local.", listener)
+browser = ServiceBrowser(zeroconf, "_arduino._tcp.local.", listener)
+print(browser)
 try:
     input("Press enter to exit...\n\n")
 finally:
