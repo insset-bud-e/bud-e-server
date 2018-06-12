@@ -39,3 +39,23 @@ def findOne(id):
             'type' : device['type']
             })
     return jsonify({'res' : output})
+
+
+# @app.route('/devices/save', methods=['POST'])
+# def create():
+#         try:
+#             devices = mongo.db.things
+#         except:
+#             return jsonify({"message": "Database connection impossible."}), 400
+#         try:
+#             print("Post method fired ...")
+#             files = request.files.getlist("files")
+#             data = []
+#             res = []
+#             predId= predictions.insert({"prediction": predObject["predictions"],\
+#             "creation_time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),\
+#             "suffix": request.form['suffix'],\
+#             "numberOfFiles":request.form['nbFiles']})
+#             return jsonify({"predID":str(predId),"message": "Prediction created with success."})
+#         except:
+#             return jsonify({"message": "Something went wrong."}), 400
