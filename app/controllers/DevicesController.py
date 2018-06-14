@@ -41,21 +41,40 @@ def findOne(id):
             })
     return jsonify({'res' : output})
 
-# @app.route('/devices/save', methods=['POST'])
-# def create():
-#         try:
-#             devices = mongo.db.things
-#         except:
-#             return jsonify({"message": "Database connection impossible."}), 400
-#         try:
-#             print("Post method fired ...")
-#             files = request.files.getlist("files")
-#             data = []
-#             res = []
-#             predId= predictions.insert({"prediction": predObject["predictions"],\
-#             "creation_time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),\
-#             "suffix": request.form['suffix'],\
-#             "numberOfFiles":request.form['nbFiles']})
-#             return jsonify({"predID":str(predId),"message": "Prediction created with success."})
-#         except:
-#             return jsonify({"message": "Something went wrong."}), 400
+@server.route('/device/save', methods=['POST'])
+def create():
+    try:
+        devices = mongo.db.things
+    except:
+        return jsonify({"message": "Database connection impossible."}), 400
+    try:
+        new_device = devices.insert({
+            'name': 'New device',\
+            'ip': '0.0.0.0',\
+            'type': 'Dummy device',\
+            'hostname':"arduino"
+        })
+        data = devices.find_one({'_id': new_device})
+        output = []
+        output.append({'_id' : str(data['_id']),\
+            'name' : data['name'],\
+            'ip' : data['ip'],\
+            'type' : data['type'],\
+            'hostname': "arduino"
+        })
+        return jsonify({"res": output[0], "message": "Device added successfully."})
+    except:
+        return jsonify({"message": "Something went wrong."}), 400
+    
+
+@server.route('/device/remove/<string:id>', methods=['POST'])
+def remove(id):
+    try:
+        devices = mongo.db.things
+    except:
+        return jsonify({"message": "Database connection impossible."}), 400
+    try:
+        devices.remove({"_id": ObjectId(id)})
+        return jsonify({"message": "Device forgotten."})
+    except:
+        return jsonify({"message": "Something went wrong."}), 400
