@@ -56,20 +56,27 @@ def create():
             json = request.get_json()
             res = []
             for i in json['devices']:
-                hostname=i['hostname']
-                newHostname=hostname[hostname.find("_")+1:hostname.find(".")]
-                new_device = devices.insert({
-                    'hostname': i['hostname'],\
-                    'ip': i['ip'],\
-                    'port': i['port'],\
-                    'type': newHostname})
-            return jsonify({"message": "Devices added successfully."})
+                if devices.find_one({'ip': i['ip']}):
+                    pass
+                else:
+                    hostname=i['hostname']
+                    newHostname=hostname[hostname.find("_")+1:hostname.find(".")]
+                    new_device = devices.insert({
+                        'hostname': i['hostname'],\
+                        'ip': i['ip'],\
+                        'port': i['port'],\
+                        'type': newHostname})
+                    res.append(new_device)
+            if res:
+                return jsonify({"message": "Devices added successfully."})
+            else:
+                return jsonify({"message": "No new device to save."})
         else:
             new_device = devices.insert({
-                'ip': '0.0.0.0',\
+                'ip': '172.20.10.5',\
                 'type': 'arduino',\
                 'hostname':"_arduino.",\
-                'port': 22
+                'port': 5000
             })
             data = devices.find_one({'_id': new_device})
             output = []
