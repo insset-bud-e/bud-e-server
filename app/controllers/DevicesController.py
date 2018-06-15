@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from app import server, mongo
 from bson.objectid import ObjectId
+import re, json
+
 
 
 @server.route('/devices', methods=['GET'])
@@ -16,9 +18,10 @@ def find():
     else:
         for device in devices:
             output.append({'_id' : str(device['_id']),\
-            'name' : device['name'],\
             'ip' : device['ip'],\
-            'type' : device['type']
+            'type' : device['type'],\
+            'hostname': device['hostname'],\
+            'port': device['port']
             })
         return jsonify({'res' : output})
 
@@ -35,9 +38,10 @@ def findOne(id):
         return jsonify({"message": "No device found with the given ID."}), 404
     else:
         output.append({'_id' : str(device['_id']),\
-            'name' : device['name'],\
+            'hostname' : device['hostname'],\
             'ip' : device['ip'],\
-            'type' : device['type']
+            'type' : device['type'],\
+            'port': device['port']
             })
     return jsonify({'res' : output})
 
@@ -48,19 +52,28 @@ def create():
     except:
         return jsonify({"message": "Database connection impossible."}), 400
     try:
-        new_device = devices.insert({
-            'name': 'New device',\
-            'ip': '0.0.0.0',\
-            'type': 'Dummy device',\
-            'hostname':"arduino"
-        })
+        if request.form:
+            hostname=request.form.get('hostname')
+            newHostname=hostname[hostname.find("_")+1:hostname.find(".")]
+            new_device = devices.insert({
+                'hostname': request.form.get('hostname'),\
+                'ip': request.form.get('ip'),\
+                'port': request.form.get('port'),\
+                'type': newHostname})
+        else:
+            new_device = devices.insert({
+                'ip': '0.0.0.0',\
+                'type': 'arduino',\
+                'hostname':"_arduino.",\
+                'port': 22
+            })
         data = devices.find_one({'_id': new_device})
         output = []
         output.append({'_id' : str(data['_id']),\
-            'name' : data['name'],\
             'ip' : data['ip'],\
             'type' : data['type'],\
-            'hostname': "arduino"
+            'hostname': data['hostname'],\
+            'port': data['port']
         })
         return jsonify({"res": output[0], "message": "Device added successfully."})
     except:
