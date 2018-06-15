@@ -52,14 +52,18 @@ def create():
     except:
         return jsonify({"message": "Database connection impossible."}), 400
     try:
-        if request.form:
-            hostname=request.form.get('hostname')
-            newHostname=hostname[hostname.find("_")+1:hostname.find(".")]
-            new_device = devices.insert({
-                'hostname': request.form.get('hostname'),\
-                'ip': request.form.get('ip'),\
-                'port': request.form.get('port'),\
-                'type': newHostname})
+        if request.get_json():
+            json = request.get_json()
+            res = []
+            for i in json['devices']:
+                hostname=i['hostname']
+                newHostname=hostname[hostname.find("_")+1:hostname.find(".")]
+                new_device = devices.insert({
+                    'hostname': i['hostname'],\
+                    'ip': i['ip'],\
+                    'port': i['port'],\
+                    'type': newHostname})
+            return jsonify({"message": "Devices added successfully."})
         else:
             new_device = devices.insert({
                 'ip': '0.0.0.0',\
@@ -67,15 +71,15 @@ def create():
                 'hostname':"_arduino.",\
                 'port': 22
             })
-        data = devices.find_one({'_id': new_device})
-        output = []
-        output.append({'_id' : str(data['_id']),\
-            'ip' : data['ip'],\
-            'type' : data['type'],\
-            'hostname': data['hostname'],\
-            'port': data['port']
-        })
-        return jsonify({"res": output[0], "message": "Device added successfully."})
+            data = devices.find_one({'_id': new_device})
+            output = []
+            output.append({'_id' : str(data['_id']),\
+                'ip' : data['ip'],\
+                'type' : data['type'],\
+                'hostname': data['hostname'],\
+                'port': data['port']
+            })
+            return jsonify({"res": output[0], "message": "Device added successfully."})
     except:
         return jsonify({"message": "Something went wrong."}), 400
     

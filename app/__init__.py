@@ -12,4 +12,4 @@ server.config['MONGO_URI'] = 'mongodb://localhost:27017/bude'
 
 mongo = PyMongo(server)
 
-from app.controllers import DiscoveryController, DevicesController, FunctionalitiesController
+from app.controllers import DiscoveryController, DevicesController
